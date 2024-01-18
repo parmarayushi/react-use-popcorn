@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "./core/components/Header";
+import Loader from "./core/components/Loader";
 import NumResults from "./core/components/NumResults";
 import Search from "./core/components/Search";
 import Box from "./shared/common-ui/Box";
@@ -8,6 +9,7 @@ import MovieList from "./shared/components/MovieList";
 import StarRating from "./shared/components/StarRating";
 import WatchedMovieList from "./shared/components/WatchedMovieList";
 import WatchedSummary from "./shared/components/WatchedSummary";
+import { MovieData, WatchedMovieData } from "./shared/modal/Movie";
 
 const tempMovieData = [
   {
@@ -56,9 +58,27 @@ const tempWatchedData = [
   },
 ];
 
+const KEY = "817be41";
 export default function App() {
-  const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState(tempWatchedData);
+  const [movies, setMovies] = useState<MovieData[]>([]);
+  const [watched, setWatched] = useState<WatchedMovieData[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    async function fetchMovies() {
+      setIsLoading(true);
+      const res = await fetch(
+        `http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`
+      );
+
+      if (!res.ok) throw new Error("Something went wrong with fetching movies");
+
+      const data = await res.json();
+      setMovies(data.Search);
+      setIsLoading(false);
+    }
+    fetchMovies();
+  }, []);
 
   return (
     <>
@@ -68,9 +88,7 @@ export default function App() {
       </Header>
 
       <Main>
-        <Box>
-          <MovieList movies={movies} />
-        </Box>
+        <Box>{isLoading ? <Loader /> : <MovieList movies={movies} />}</Box>
 
         <Box>
           <WatchedSummary watched={watched} />

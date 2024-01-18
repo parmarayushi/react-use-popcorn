@@ -18,10 +18,10 @@ export default function StarRating({
   messages = [""],
   defaultRating = 0,
 }) {
-  const [rating, setRating] = useState(defaultRating);
-  const [tempRating, setTempRating] = useState(0);
+  const [rating, setRating] = useState<number>(defaultRating);
+  const [tempRating, setTempRating] = useState<number>(0);
 
-  const handleRating = (rating: any) => {
+  const handleRating = (rating: number) => {
     setRating(rating);
   };
 
