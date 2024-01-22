@@ -1,13 +1,25 @@
+import { WatchedMovieData } from "../modal/Movie";
+
 const average = (arr: any) =>
   arr.reduce(
-    (acc: any, cur: any, i: any, arr: any) => acc + cur / arr.length,
+    (acc: number, i: number, cur: number, arr: any) => acc + cur / arr.length,
     0
   );
 
-export default function WatchedSummary({ watched }: any) {
-  const avgImdbRating = average(watched.map((movie: any) => movie.imdbRating));
-  const avgUserRating = average(watched.map((movie: any) => movie.userRating));
-  const avgRuntime = average(watched.map((movie: any) => movie.runtime));
+export default function WatchedSummary({
+  watched,
+}: {
+  watched: WatchedMovieData[];
+}) {
+  const avgImdbRating = average(
+    watched.map((movie: WatchedMovieData) => movie.imdbRating)
+  );
+  const avgUserRating = average(
+    watched.map((movie: WatchedMovieData) => movie.userRating)
+  );
+  const avgRuntime = average(
+    watched.map((movie: WatchedMovieData) => movie.runtime)
+  );
   return (
     <div className="summary">
       <h2>Movies you watched</h2>
@@ -18,11 +30,11 @@ export default function WatchedSummary({ watched }: any) {
         </p>
         <p>
           <span>⭐️</span>
-          <span>{avgImdbRating}</span>
+          <span>{avgImdbRating.toFixed(2)}</span>
         </p>
         <p>
           <span>🌟</span>
-          <span>{avgUserRating}</span>
+          <span>{avgUserRating.toFixed(2)}</span>
         </p>
         <p>
           <span>⏳</span>

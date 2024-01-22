@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { StarRatingProps } from "../modal/Movie";
 import Star from "./Star";
 
 const containerStyle = {
@@ -17,12 +18,14 @@ export default function StarRating({
   size = 48,
   messages = [""],
   defaultRating = 0,
-}) {
+  onSetRating,
+}: StarRatingProps) {
   const [rating, setRating] = useState<number>(defaultRating);
   const [tempRating, setTempRating] = useState<number>(0);
 
   const handleRating = (rating: number) => {
     setRating(rating);
+    onSetRating(rating);
   };
 
   const textStyle = {

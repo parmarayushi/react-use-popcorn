@@ -5,8 +5,8 @@ import NumResults from "./core/components/NumResults";
 import Search from "./core/components/Search";
 import Box from "./shared/common-ui/Box";
 import Main from "./shared/components/Main";
+import MovieDetails from "./shared/components/MovieDetails";
 import MovieList from "./shared/components/MovieList";
-import StarRating from "./shared/components/StarRating";
 import WatchedMovieList from "./shared/components/WatchedMovieList";
 import WatchedSummary from "./shared/components/WatchedSummary";
 import { MovieData, WatchedMovieData } from "./shared/modal/Movie";
@@ -63,6 +63,7 @@ export default function App() {
   const [movies, setMovies] = useState<MovieData[]>([]);
   const [watched, setWatched] = useState<WatchedMovieData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
     async function fetchMovies() {
@@ -80,6 +81,22 @@ export default function App() {
     fetchMovies();
   }, []);
 
+  const handleSelectedMovie = (id: any) => {
+    setSelectedId((selectedId) => (id === selectedId ? null : id));
+  };
+
+  const handleCloseMovie = () => {
+    setSelectedId(null);
+  };
+
+  const handleAddWatched = (movie: WatchedMovieData) => {
+    setWatched((watched) => [...watched, movie]);
+  };
+
+  const handleDeleteWatched = (id: string) => {
+    setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
+  };
+
   return (
     <>
       <Header>
@@ -88,16 +105,31 @@ export default function App() {
       </Header>
 
       <Main>
-        <Box>{isLoading ? <Loader /> : <MovieList movies={movies} />}</Box>
+        <Box>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <MovieList movies={movies} onSelectMovie={handleSelectedMovie} />
+          )}
+        </Box>
 
         <Box>
-          <WatchedSummary watched={watched} />
-          <WatchedMovieList watched={watched} />
-          <StarRating
-            maxRating={5}
-            messages={["Terrible", "Bad", "Okay", "Good", "Amazing"]}
-            defaultRating={3}
-          />
+          {selectedId ? (
+            <MovieDetails
+              selectedId={selectedId}
+              onCloseMovie={handleCloseMovie}
+              onAddWatched={handleAddWatched}
+              watched={watched}
+            />
+          ) : (
+            <>
+              <WatchedSummary watched={watched} />
+              <WatchedMovieList
+                watched={watched}
+                onDeleteWatched={handleDeleteWatched}
+              />
+            </>
+          )}
         </Box>
       </Main>
     </>
